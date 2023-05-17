@@ -19,7 +19,7 @@ const int pos_IDdevice = 450;
 ////
 String name_wifi = "BUBUCHACHA";
 String ssid_pass;
-
+String send_str ="";
 
 String Separate = "@";
 
@@ -202,6 +202,7 @@ void loop() {
                       String post_data = server_ip+"/data";
                       lastTime = millis();
                       https.begin(client, post_data);
+                      myObject["id_device"] = IDdevice;
                       myObject["data_device"] =send_str; 
                       jsonString = JSON.stringify(myObject);
                       int httpCode = https.POST(jsonString);
