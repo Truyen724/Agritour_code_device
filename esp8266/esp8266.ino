@@ -11,12 +11,13 @@ ESP8266WebServer server(80);
 String ssid = "";
 String password = "";
 String server_ip = "http://172.16.29.209:3001";
-String send_str ="";
+String IDdevice = "";
 const int pos_ssid = 0;
 const int pos_pass = 150;
 const int pos_server = 300;
+const int pos_IDdevice = 450;
 ////
-String name_wifi = "AgriTour";
+String name_wifi = "BUBUCHACHA";
 String ssid_pass;
 
 
@@ -39,6 +40,7 @@ void setup() {
   delay(300);
   read(pos_server);
   delay(300);
+  read(pos_IDdevice);
   ////
   //Thiết lập wifi  
   WiFi.begin(ssid, password);
@@ -59,8 +61,9 @@ void setup() {
 // thiết lập server  
   server.on(F("/set_ssid"), set_ssid);
   server.on(F("/set_password"), set_password);
-  
+
   server.on(F("/set_server"), set_server);
+  server.on(F("/set_id_device"), set_IDdevice);
   server.on(F("/"),hello);
   server.begin();
 }
@@ -68,7 +71,7 @@ void set_ssid(){
   String  ssid_ = server.arg("plain");
   save(pos_ssid,ssid_);
   delay(200);
-  server.send(200, "text/plain", "ok");
+  server.send(200, "text/plain", "ok! "+server_ip ); 
 }
 void set_password(){
   String pas_ = server.arg("plain");
@@ -84,22 +87,32 @@ void set_password(){
   {
     Serial.print("Connected to WiFi network with IP Address: ");
     Serial.println(WiFi.localIP());
-    server.send(200, "text/plain", "ok");
+    server.send(200, "text/plain", "ok! "+server_ip ); 
   }
   else
   {
-    server.send(200, "text/plain", "ok");
+    server.send(200, "text/plain", "not_connected" + server_ip);
   }
 }
 void set_server()
 {
   String ser_ip = server.arg("plain");
-  Serial.println(ser_ip);
+  Serial.println(server_ip);
   save(pos_server, ser_ip);
   delay(200);
   read(pos_server);
   delay(200);
-  server.send(200, "text/plain", "ok"); 
+  server.send(200, "text/plain", "ok! "+ser_ip ); 
+}
+void set_IDdevice()
+{
+  String ser_ip = server.arg("plain");
+  Serial.println(server_ip);
+  save(pos_IDdevice, ser_ip);
+  delay(200);
+  read(pos_IDdevice);
+  delay(200);
+  server.send(200, "text/plain", "ok! "+server_ip ); 
 }
 void save(int start_position, String str){
   EEPROM.begin(512);
@@ -143,6 +156,10 @@ void read(int start_position)
                             server_ip = x;
                             Serial.println("set_server "+x);
                             break;   
+                          case pos_IDdevice:
+                            IDdevice = x;
+                            Serial.println("IDdevice "+x);
+                            break;                              
                                   }
          }
          else
@@ -156,6 +173,7 @@ void hello()
 {
   Serial.println("helllllllllllllo");
 }
+
 void loop() {
 
   Serial.print(ssid);
